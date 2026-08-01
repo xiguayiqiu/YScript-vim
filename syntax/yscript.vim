@@ -1,6 +1,6 @@
 " YScript Vim syntax highlighting
 " Full syntax support for YScript InfoSec scripting language
-" Last updated: 2026-07
+" Last updated: 2026-08
 
 if exists("b:current_syntax")
   finish
@@ -92,7 +92,7 @@ syn keyword yscriptNamespace  io net http ssl raw json regex binary
 syn keyword yscriptNamespace  encoding crypto aes rsa compress
 syn keyword yscriptNamespace  yaml toml ini sync time rand sys os
 syn keyword yscriptNamespace  path strings array from log stdio color
-syn keyword yscriptNamespace  ffi reflect errors cuda
+syn keyword yscriptNamespace  ffi reflect errors cuda url iter csv xml thread
 
 " ── 类型 ──────────────────────────────────────────────
 
@@ -143,12 +143,14 @@ syn match  yscriptOperator    "[+\-*/%]"
 
 " 空安全 / 成员 / 指针
 syn match  yscriptOperator    "?\.\|??"
+syn match  yscriptOperator    "?"
 syn match  yscriptOperator    "\.\|::"
 syn match  yscriptOperator    "@>"
 syn match  yscriptOperator    "@"
 
-" 箭头和范围
+" 箭头 / match 分支 / 范围
 syn match  yscriptOperator    "->"
+syn match  yscriptOperator    "=>"
 syn match  yscriptOperator    "\.\.\|\.\.\."
 
 " Test 表达式: -e -f -d -r -w -x -s -L -h -b -c -p -S -u -g -k

@@ -58,7 +58,7 @@ sudo cp yscript /usr/local/bin/
 | Shell 变量 | `yscriptShellVar` | `$HOME` `$(cmd)` `${var}` |
 | 数字 | `yscriptFloat/Hex/Oct/Bin/Int` | `3.14` `0xFF` `0b1010` |
 | 注释 | `yscriptComment/CommentBlock` | `# 行注释` `#* 块注释 *#` |
-| 操作符 | `yscriptOperator` | `|>` `==` `?.` `??` `+=` |
+| 操作符 | `yscriptOperator` | `|>` `=>` `->` `?`(三元) `==` `?.` `??` `+=` |
 | Test 表达式 | `yscriptTestOp` | `-e` `-f` `-d` `-r` `-eq` `-gt` |
 | 转义序列 | `yscriptEscape` | `\n` `\x90` `\u4f60` `\U0001F600` |
 
