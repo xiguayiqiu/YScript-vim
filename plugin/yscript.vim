@@ -1,7 +1,7 @@
 " YScript Vim plugin
 "
 " Features:
-"   - Syntax check on save (uses `yscript -c`)
+"   - Syntax check on save (uses `ysc -c`)
 "
 " No external dependencies required (No Node.js, no LSP server)
 
@@ -19,10 +19,10 @@ augroup END
 
 function! s:yscript_check() abort
   let l:file = expand('%:p')
-  if !executable('yscript')
+  if !executable('ysc')
     return
   endif
-  let l:out = system('yscript -c ' . shellescape(l:file) . ' 2>&1')
+  let l:out = system('ysc -c ' . shellescape(l:file) . ' 2>&1')
   if v:shell_error
     echohl WarningMsg
     echomsg 'YScript: ' . substitute(l:out, '\n', ' | ', 'g')
