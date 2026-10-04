@@ -66,11 +66,11 @@ sudo cp yscript /usr/local/bin/
 | 类别 | 高亮组 | 示例 |
 |------|--------|------|
 | 声明/控制流 | `yscriptStatement/Conditional/Repeat` | `func` `let` `if` `for` `warp` |
-| 异常 | `yscriptException` | `try` `catch` `finally` `raise` `panic` `recover` `assert` |
+| 异常 | `yscriptException` | `try` `catch` `finally` `ensure` `raise` `panic` `recover` `assert` |
 | 比较/匹配 | `yscriptComparison` | `matches` `is` |
 | 类型 | `yscriptType` | `string` `bytes` `list` `dict` `ipv4` `ipv6` `error` `any` |
 | 内置函数 | `yscriptBuiltin` | `print` `len` `type` `eval` `hex` |
-| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Get` |
+| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Get` `socket.Socket` |
 | 函数声明名 | `yscriptFuncName` | `func main(` `func this.area(` |
 | 类型声明名 | `yscriptTypeName` | `struct Point` `enum Status` `interface Scanner` |
 | 命名空间 | `yscriptNamespace` | `io` `net` `json` `crypto` `sync` `ssl` |
@@ -113,8 +113,14 @@ sudo cp yscript /usr/local/bin/
 
 > 语法范围对照 YScript Go 词法器（`internal/lexer`、`internal/preproc`）与 `doc/` 文档补全：
 > 新增关键字 `var` `using` `namespace` `do` `class` `map` `matches` `is` `self`
-> 与 `try`/`catch`/`finally`/`raise`，以及插值字符串、bytes base64 前缀、正则字面量、
+> 与 `try`/`catch`/`finally`/`ensure`/`raise`，以及插值字符串、bytes base64 前缀、正则字面量、
 > 标签、函数/类型声明名、命名空间函数与常量、`Err*` 错误码等。
+>
+> **命名空间**：共 **38 个**，与 `internal/std` 的 `GetNamespace()` 一致，包含
+> `socket`（v0.1.4 新增的 TCP/UDP/TLS 统一对象）。
+>
+> **成员名高亮**：`.` 后紧跟标识符时按方法/属性着色（`s.listen()`、`"x".upper()`、
+> `m.try_lock()`），此时 `.` 本身不再按操作符着色；浮点字面量（`1.5`）不受影响。
 
 ---
 

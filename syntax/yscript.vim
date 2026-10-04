@@ -1,17 +1,19 @@
 " YScript Vim syntax highlighting
 " Full syntax support for YScript InfoSec scripting language
-" Last updated: 2026-08
+" Last updated: 2026-10（socket 命名空间：TCP/UDP/TLS 统一对象）
 "
 " 语法范围对照 YScript Go 词法器 (yscript/internal/lexer) 与 doc/ 文档：
 "   - 关键字 var/using/namespace/do/class/map/matches/is
-"     try/catch/finally/raise/self
+"     try/catch/finally/ensure/raise/self
 "   - 预处理器指令 #if/#elif/#else/#endif/#!permit (internal/preproc)
 "   - 插值字符串 $"..." 与 ${expr}（TOKEN_INTERP_START）
 "   - bytes 的 base64 前缀 b"base64:..."
 "   - 正则字面量 /pattern/flags（TOKEN_REGEXP）
 "   - 标签 label:（TOKEN_LABEL）
-"   - 命名空间函数 io.read_file、命名空间常量 io.Stdin / time.DAY
+"   - 命名空间函数 socket.Socket、命名空间常量 io.Stdin / time.DAY
 "   - Err* 错误码常量（doc/18）
+"
+" 命名空间清单与 internal/std 的 GetNamespace() 保持一致（38 个）。
 
 if exists("b:current_syntax")
   finish
@@ -112,14 +114,15 @@ syn keyword yscriptStatement  let const var
 syn keyword yscriptStatement  func return defer yield init main
 
 " 类型定义
-syn keyword yscriptStatement  struct enum interface class map do warp this self
+syn keyword yscriptStatement  struct enum interface class map do warp this self super
+syn keyword yscriptStatement  extends
 
 " 流程控制
 syn keyword yscriptConditional if else elif switch case default match
 syn keyword yscriptRepeat      for while loop in range break continue goto
 
 " 异常处理
-syn keyword yscriptException  try catch finally raise panic recover assert
+syn keyword yscriptException  try catch finally ensure raise panic recover assert
 
 " 比较/匹配关键字
 syn keyword yscriptComparison matches is
@@ -138,11 +141,11 @@ syn keyword yscriptType       ipv4 ipv6 error void any command
 
 " ── 命名空间 ────────────────────────────────────
 " 用 match 而非 keyword，便于与命名空间函数/常量匹配共存
-syn match   yscriptNamespace  "\<\%(io\|net\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\>"
+syn match   yscriptNamespace  "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\>"
 
 " 命名空间函数调用 ns.func（ns 部分青色，函数名亮蓝）
-syn match   yscriptQualifiedBuiltin "\<\%(io\|net\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
-syn match   yscriptNsDot       "\<\%(io\|net\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\." contained
+syn match   yscriptQualifiedBuiltin "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
+syn match   yscriptNsDot       "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\." contained
 
 " 命名空间常量 io.Stdin / io.EOF / time.DAY / binary.EOF
 " 定义在命名空间函数之后，同位置优先（最后定义者胜）
@@ -152,6 +155,7 @@ syn match   yscriptConstant    "\<\%(time\.\(DAY\|HOUR\|MINUTE\|SECOND\|MILLISEC
 " 锚定在名字本身（func/struct 关键字会压制以其为起点的 match）
 syn match   yscriptFuncName    "\%(\<func\s\+\%(this\.\)\?\)\@<=[A-Za-z_][A-Za-z0-9_]*"
 syn match   yscriptTypeName    "\%(\<\%(struct\|interface\|enum\|class\)\s\+\)\@<=[A-Za-z_][A-Za-z0-9_]*"
+syn match   yscriptTypeName    "\%(\<extends\s\+\)\@<=[A-Za-z_][A-Za-z0-9_]*"
 
 " ── 标签 label: ─────────────────────────────────
 syn match   yscriptLabel       "^[ \t]*\zs[A-Za-z_][A-Za-z0-9_]*\ze:[ \t]*$"
@@ -187,9 +191,12 @@ syn match  yscriptOperator    "[&|^~]"
 syn match  yscriptOperator    "[+\-*/%]"
 
 " 空安全 / 成员 / 指针
+" 注意：. 后紧跟标识符时交给 yscriptMethod（成员名），
+" 否则 . 会被此处的 operator 抢先匹配（同位置同时定义时 operator 胜出），
+" 导致 s.listen / "x".upper() 等方法名完全不高亮。
 syn match  yscriptOperator    "?\.\|??"
 syn match  yscriptOperator    "?"
-syn match  yscriptOperator    "\.\|::"
+syn match  yscriptOperator    "\.\%(\%(_\|[A-Za-z]\)\)\@!\|::"
 syn match  yscriptOperator    "@>"
 syn match  yscriptOperator    "@"
 
