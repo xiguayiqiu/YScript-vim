@@ -132,24 +132,38 @@ syn keyword yscriptBoolean    true false
 syn keyword yscriptLogical    and or not xor
 
 " 特殊值
-syn keyword yscriptSpecial    nil nan inf
+syn keyword yscriptSpecial    nil null nan inf
 
 " ── 类型 ──────────────────────────────────────────────
 syn keyword yscriptType       byte char short ushort int uint long ulong
 syn keyword yscriptType       float double bool string bytes list dict
 syn keyword yscriptType       ipv4 ipv6 error void any command
+" FFI/C 互操作的类型名（clong/culong 是 C 的 long，宽度随平台而变）
+syn keyword yscriptType       clong culong ptr void cstring
 
 " ── 命名空间 ────────────────────────────────────
 " 用 match 而非 keyword，便于与命名空间函数/常量匹配共存
-syn match   yscriptNamespace  "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\>"
+syn match   yscriptNamespace  "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>"
 
 " 命名空间函数调用 ns.func（ns 部分青色，函数名亮蓝）
-syn match   yscriptQualifiedBuiltin "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
-syn match   yscriptNsDot       "\<\%(io\|net\|socket\|http\|ssl\|raw\|json\|regex\|binary\|encoding\|crypto\|aes\|rsa\|compress\|yaml\|toml\|ini\|sync\|time\|rand\|sys\|os\|path\|strings\|array\|from\|log\|stdio\|color\|ffi\|reflect\|errors\|cuda\|url\|iter\|csv\|xml\|thread\)\." contained
+syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
+syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>\." contained
 
 " 命名空间常量 io.Stdin / io.EOF / time.DAY / binary.EOF
 " 定义在命名空间函数之后，同位置优先（最后定义者胜）
 syn match   yscriptConstant    "\<\%(time\.\(DAY\|HOUR\|MINUTE\|SECOND\|MILLISECOND\|RFC3339\)\|binary\.EOF\|io\.\(EOF\|Stdin\|Stdout\|Stderr\)\)\>"
+
+" ── C/FFI 高频成员 ─────────────────────────────────────
+" c 模块：编译工具链 + 动态库 + 回调 + 头文件解析
+syn match   yscriptCFunc      "c\.\%(compile\|compile_load\|compile_obj\|link\|load\|unload\|bind\|find\|call\)\>"
+syn match   yscriptCFunc      "c\.\%(callback\|callback_free\|parse_header\|header_bind\)\>"
+syn match   yscriptCFunc      "c\.\%(compiler\|compilers\)\>"
+" ffi 命名空间
+syn match   yscriptCFunc      "ffi\.\%(open\|find\|bind\|call\|alloc\|free\|read\|write\|str\)\>"
+" 回调类型标记：c.callback(...) 的参数里会出现这些 FFI 类型名
+" 结构体类型形如 struct:int32,double（冒号后是字段类型列表）
+syn match   yscriptFFIType    "\<\%(clong\|culong\|int8\|int16\|int32\|int64\)\>"
+syn match   yscriptFFIType    "\<struct\ze\:[A-Za-z0-9_,]\+\>"
 
 " ── 函数/类型声明名称 ───────────────────────────
 " 锚定在名字本身（func/struct 关键字会压制以其为起点的 match）
@@ -254,6 +268,10 @@ hi def yscriptFuncName        ctermfg=81  guifg=#66d9ff
 
 " 命名空间 → 青色
 hi def yscriptNamespace       ctermfg=6   guifg=#66cccc
+
+" C/FFI 成员：比普通命名空间函数略深，呼应「外部函数」语义
+hi def link yscriptCFunc       yscriptQualifiedBuiltin
+hi def yscriptFFIType         ctermfg=10  guifg=#cc9966
 hi def yscriptNsDot           ctermfg=6   guifg=#66cccc
 
 " 方法/属性 → 青绿

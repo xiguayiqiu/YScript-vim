@@ -132,6 +132,10 @@ sudo cp yscript /usr/local/bin/
 
 ## 插件功能
 
+**语法高亮** — 覆盖全部关键字（70 个）、40 个内置命名空间、
+C/FFI 互操作（`c.compile` / `c.callback` / `c.parse_header` / `ffi.alloc` 等成员，
+以及 `struct:int32,double`、`clong`/`culong` 等类型写法）。
+
 **保存时语法检查** — 保存文件时自动运行 `yscript -c <file>`，语法错误显示在消息栏。
 
 如需禁用：
