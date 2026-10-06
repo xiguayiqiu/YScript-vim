@@ -70,7 +70,7 @@ sudo cp yscript /usr/local/bin/
 | 比较/匹配 | `yscriptComparison` | `matches` `is` |
 | 类型 | `yscriptType` | `string` `bytes` `list` `dict` `ipv4` `ipv6` `error` `any` |
 | 内置函数 | `yscriptBuiltin` | `print` `len` `type` `eval` `hex` |
-| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Get` `socket.Socket` |
+| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Session` `socket.Socket` |
 | 函数声明名 | `yscriptFuncName` | `func main(` `func this.area(` |
 | 类型声明名 | `yscriptTypeName` | `struct Point` `enum Status` `interface Scanner` |
 | 命名空间 | `yscriptNamespace` | `io` `net` `json` `crypto` `sync` `ssl` |
@@ -118,6 +118,10 @@ sudo cp yscript /usr/local/bin/
 >
 > **命名空间**：共 **38 个**，与 `internal/std` 的 `GetNamespace()` 一致，包含
 > `socket`（v0.1.4 新增的 TCP/UDP/TLS 统一对象）。
+>
+> **`ns.func` 通配**：命名空间成员按 `名字.标识符` 整体着色，因此
+> `http.Session` / `http.Form` / `http.Upload` / `http.Download` 等
+> v0.1.5.1 新增的 HTTP 成员自动高亮，无需手工维护成员清单。
 >
 > **成员名高亮**：`.` 后紧跟标识符时按方法/属性着色（`s.listen()`、`"x".upper()`、
 > `m.try_lock()`），此时 `.` 本身不再按操作符着色；浮点字面量（`1.5`）不受影响。

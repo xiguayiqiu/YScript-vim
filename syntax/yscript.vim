@@ -1,6 +1,6 @@
 " YScript Vim syntax highlighting
 " Full syntax support for YScript InfoSec scripting language
-" Last updated: 2026-10（socket 命名空间：TCP/UDP/TLS 统一对象）
+" Last updated: 2026-10（Unicode 字符串方法与严格数值转换）
 "
 " 语法范围对照 YScript Go 词法器 (yscript/internal/lexer) 与 doc/ 文档：
 "   - 关键字 var/using/namespace/do/class/map/matches/is
@@ -143,15 +143,28 @@ syn keyword yscriptType       clong culong ptr void cstring
 
 " ── 命名空间 ────────────────────────────────────
 " 用 match 而非 keyword，便于与命名空间函数/常量匹配共存
-syn match   yscriptNamespace  "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>"
+syn match   yscriptNamespace  "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>"
 
 " 命名空间函数调用 ns.func（ns 部分青色，函数名亮蓝）
-syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
-syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml)\>\." contained
+syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
+syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\." contained
 
 " 命名空间常量 io.Stdin / io.EOF / time.DAY / binary.EOF
 " 定义在命名空间函数之后，同位置优先（最后定义者胜）
 syn match   yscriptConstant    "\<\%(time\.\(DAY\|HOUR\|MINUTE\|SECOND\|MILLISECOND\|RFC3339\)\|binary\.EOF\|io\.\(EOF\|Stdin\|Stdout\|Stderr\)\)\>"
+
+" ── HTTP 高频成员（v0.1.5.1：Server / StatusCode / 退避策略 / 钩子）──
+" 方法动词 + 状态码/退避/服务端额外突出，让 http.* 调用一眼可读
+syn match   yscriptHttpFunc    "http\.\%(Get\|Post\|Put\|Patch\|Delete\|Head\|Options\|Do\|Request\)\>"
+syn match   yscriptHttpFunc    "http\.\%(Server\|Session\|Form\|Upload\|Download\|Dump\|Query\)\>"
+syn match   yscriptHttpFunc    "http\.\%(Headers\|Body\|Raw\|Json\|Ok\|Cookie\|Cookies\|StatusText\|StatusCode\)\>"
+syn match   yscriptHttpFunc    "http\.\%(Set\%(Timeout\|Proxy\|UserAgent\|Header\|Redirects\|Cookie\|Retries\|RetryDelay\|RetryBackoff\|MaxBody\|Raise\|AfterResponse\)\|BasicAuth\|Insecure\|Clear\%(Cookies\|Headers\)\|LastError\|Reset\)\>"
+
+" 静态目录 / PHP CGI 服务
+syn match   yscriptNetFunc     "net\.\%(nginx\|Nginx\)\>"
+
+" 加密与哈希：SHA2/SHA3/BLAKE2/HMAC
+syn match   yscriptCryptoFunc  "crypto\.\%(MD5\|SHA1\|SHA224\|SHA256\|SHA384\|SHA512\|SHA512_224\|SHA512_256\|SHA3_224\|SHA3_256\|SHA3_384\|SHA3_512\|SHAKE128\|SHAKE256\|BLAKE2s\|BLAKE2b\|HMAC_SHA256\|HMAC_SHA3\|HMAC_SHA3_256\|HMAC_SHA3_384\|HMAC_SHA3_512\|HMAC_SHA512\|HashFile\|PBKDF2\|BcryptHash\|BcryptVerify\)\>"
 
 " ── C/FFI 高频成员 ─────────────────────────────────────
 " c 模块：编译工具链 + 动态库 + 回调 + 头文件解析
@@ -229,6 +242,7 @@ syn match  yscriptDelimiter   "[{}()\[\];,:]"
 
 " ── 方法 / 属性（点号后；定义在操作符后，优先于 . 操作符）──
 syn match   yscriptMethod      "[^?]\@<=\.\zs[A-Za-z_][A-Za-z0-9_]*"
+syn match   yscriptStringMethod "\.\zs\%(rune_len\|char_at\|slice\|to_int\|to_float\)\>"
 
 " ── 正则字面量 /pattern/flags（定义在操作符后，优先于 / 除号）──
 " 首字符 guard: 不是 / 或 *（避免 // 与 /* 被当成正则）
@@ -271,11 +285,15 @@ hi def yscriptNamespace       ctermfg=6   guifg=#66cccc
 
 " C/FFI 成员：比普通命名空间函数略深，呼应「外部函数」语义
 hi def link yscriptCFunc       yscriptQualifiedBuiltin
+hi def link yscriptHttpFunc     yscriptQualifiedBuiltin
+hi def link yscriptNetFunc      yscriptQualifiedBuiltin
+hi def link yscriptCryptoFunc   yscriptQualifiedBuiltin
 hi def yscriptFFIType         ctermfg=10  guifg=#cc9966
 hi def yscriptNsDot           ctermfg=6   guifg=#66cccc
 
 " 方法/属性 → 青绿
 hi def yscriptMethod          ctermfg=79  guifg=#5fd7af
+hi def link yscriptStringMethod yscriptMethod
 
 " 逻辑关键字 → 亮黄
 hi def yscriptLogical         ctermfg=228 guifg=#ffff87
