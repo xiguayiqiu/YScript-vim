@@ -1,6 +1,6 @@
 " YScript Vim syntax highlighting
 " Full syntax support for YScript InfoSec scripting language
-" Last updated: 2026-10（Unicode 字符串方法与严格数值转换）
+" Last updated: 2026-10（<- 类型推断声明）
 "
 " 语法范围对照 YScript Go 词法器 (yscript/internal/lexer) 与 doc/ 文档：
 "   - 关键字 var/using/namespace/do/class/map/matches/is
@@ -13,7 +13,7 @@
 "   - 命名空间函数 socket.Socket、命名空间常量 io.Stdin / time.DAY
 "   - Err* 错误码常量（doc/18）
 "
-" 命名空间清单与 internal/std 的 GetNamespace() 保持一致（38 个）。
+" 命名空间清单与 internal/std 的 GetNamespace() 保持一致（41 个）。
 
 if exists("b:current_syntax")
   finish
@@ -150,6 +150,10 @@ syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress
 syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\." contained
 
 " 命名空间常量 io.Stdin / io.EOF / time.DAY / binary.EOF
+syn match   yscriptOCRNamespace "\<ocr\>"
+syn match   yscriptOCRQualifiedBuiltin "\<ocr\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
+syn match   yscriptNsDot       "\<ocr\." contained
+
 " 定义在命名空间函数之后，同位置优先（最后定义者胜）
 syn match   yscriptConstant    "\<\%(time\.\(DAY\|HOUR\|MINUTE\|SECOND\|MILLISECOND\|RFC3339\)\|binary\.EOF\|io\.\(EOF\|Stdin\|Stdout\|Stderr\)\)\>"
 
@@ -161,6 +165,7 @@ syn match   yscriptHttpFunc    "http\.\%(Headers\|Body\|Raw\|Json\|Ok\|Cookie\|C
 syn match   yscriptHttpFunc    "http\.\%(Set\%(Timeout\|Proxy\|UserAgent\|Header\|Redirects\|Cookie\|Retries\|RetryDelay\|RetryBackoff\|MaxBody\|Raise\|AfterResponse\)\|BasicAuth\|Insecure\|Clear\%(Cookies\|Headers\)\|LastError\|Reset\)\>"
 
 " 静态目录 / PHP CGI 服务
+syn match   yscriptOCRFunc     "ocr\.\%(recognize\|from_file\|set_lang\|get_lang\|set_psm\|get_psm\)\>"
 syn match   yscriptNetFunc     "net\.\%(nginx\|Nginx\)\>"
 
 " 加密与哈希：SHA2/SHA3/BLAKE2/HMAC
@@ -183,6 +188,7 @@ syn match   yscriptFFIType    "\<struct\ze\:[A-Za-z0-9_,]\+\>"
 syn match   yscriptFuncName    "\%(\<func\s\+\%(this\.\)\?\)\@<=[A-Za-z_][A-Za-z0-9_]*"
 syn match   yscriptTypeName    "\%(\<\%(struct\|interface\|enum\|class\)\s\+\)\@<=[A-Za-z_][A-Za-z0-9_]*"
 syn match   yscriptTypeName    "\%(\<extends\s\+\)\@<=[A-Za-z_][A-Za-z0-9_]*"
+syn match   yscriptVariableName "\<[A-Za-z_][A-Za-z0-9_]*\>\ze\s*<-"
 
 " ── 标签 label: ─────────────────────────────────
 syn match   yscriptLabel       "^[ \t]*\zs[A-Za-z_][A-Za-z0-9_]*\ze:[ \t]*$"
@@ -272,6 +278,7 @@ hi def yscriptType            ctermfg=13  guifg=#cc88ff
 
 " 类型声明名称 → 浅紫
 hi def yscriptTypeName        ctermfg=141 guifg=#af87ff
+hi def yscriptVariableName    ctermfg=15  guifg=#f8f8f2
 
 " 内置函数 → 亮蓝
 hi def yscriptBuiltin         ctermfg=12  guifg=#6699ff
@@ -282,12 +289,15 @@ hi def yscriptFuncName        ctermfg=81  guifg=#66d9ff
 
 " 命名空间 → 青色
 hi def yscriptNamespace       ctermfg=6   guifg=#66cccc
+hi def link yscriptOCRNamespace yscriptNamespace
 
 " C/FFI 成员：比普通命名空间函数略深，呼应「外部函数」语义
 hi def link yscriptCFunc       yscriptQualifiedBuiltin
 hi def link yscriptHttpFunc     yscriptQualifiedBuiltin
 hi def link yscriptNetFunc      yscriptQualifiedBuiltin
 hi def link yscriptCryptoFunc   yscriptQualifiedBuiltin
+hi def link yscriptOCRQualifiedBuiltin yscriptQualifiedBuiltin
+hi def link yscriptOCRFunc      yscriptQualifiedBuiltin
 hi def yscriptFFIType         ctermfg=10  guifg=#cc9966
 hi def yscriptNsDot           ctermfg=6   guifg=#66cccc
 

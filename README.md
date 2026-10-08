@@ -66,14 +66,15 @@ sudo cp yscript /usr/local/bin/
 | 类别 | 高亮组 | 示例 |
 |------|--------|------|
 | 声明/控制流 | `yscriptStatement/Conditional/Repeat` | `func` `let` `if` `for` `warp` |
+| 类型推断声明名 | `yscriptVariableName` | `result <- expression` |
 | 异常 | `yscriptException` | `try` `catch` `finally` `ensure` `raise` `panic` `recover` `assert` |
 | 比较/匹配 | `yscriptComparison` | `matches` `is` |
 | 类型 | `yscriptType` | `string` `bytes` `list` `dict` `ipv4` `ipv6` `error` `any` |
 | 内置函数 | `yscriptBuiltin` | `print` `len` `type` `eval` `hex` |
-| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Session` `socket.Socket` |
+| 命名空间函数 | `yscriptQualifiedBuiltin` | `io.read_file` `json.parse` `http.Session` `ocr.recognize` |
 | 函数声明名 | `yscriptFuncName` | `func main(` `func this.area(` |
 | 类型声明名 | `yscriptTypeName` | `struct Point` `enum Status` `interface Scanner` |
-| 命名空间 | `yscriptNamespace` | `io` `net` `json` `crypto` `sync` `ssl` |
+| 命名空间 | `yscriptNamespace` | `io` `net` `json` `crypto` `ocr` `sync` `ssl` |
 | 方法/属性 | `yscriptMethod` | `s.contains()` `d.keys` `h.await()` |
 | 逻辑 | `yscriptLogical` | `and` `or` `not` `xor` |
 | 常量/特殊值 | `yscriptBoolean/Special/Constant` | `true` `false` `nil` `LAST_EXIT_CODE` `OS` `ENV` |
@@ -89,7 +90,7 @@ sudo cp yscript /usr/local/bin/
 | Shell 变量 | `yscriptShellVar` | `$HOME` `$(cmd)` `${var}` |
 | 数字 | `yscriptFloat/Hex/Oct/Bin/Int` | `3.14` `0xFF` `0b1010` |
 | 注释 | `yscriptComment/CommentBlock` | `# 行注释` `#* 块注释 *#` |
-| 操作符 | `yscriptOperator` | `|>` `=>` `->` `?`(三元) `==` `?.` `??` `+=` |
+| 操作符 | `yscriptOperator` | `<-`（类型推断声明） `|>` `=>` `->` `?`(三元) `==` `?.` `??` `+=` |
 | Test 表达式 | `yscriptTestOp` | `-e` `-f` `-d` `-r` `-eq` `-gt` |
 | 转义序列 | `yscriptEscape` | `\n` `\x90` `\u4f60` `\U0001F600` |
 
@@ -116,7 +117,7 @@ sudo cp yscript /usr/local/bin/
 > 与 `try`/`catch`/`finally`/`ensure`/`raise`，以及插值字符串、bytes base64 前缀、正则字面量、
 > 标签、函数/类型声明名、命名空间函数与常量、`Err*` 错误码等。
 >
-> **命名空间**：共 **38 个**，与 `internal/std` 的 `GetNamespace()` 一致，包含
+> **命名空间**：共 **41 个**，与 `internal/std` 的 `GetNamespace()` 一致，包含
 > `socket`（v0.1.4 新增的 TCP/UDP/TLS 统一对象）。
 >
 > **`ns.func` 通配**：命名空间成员按 `名字.标识符` 整体着色，因此
@@ -136,7 +137,7 @@ sudo cp yscript /usr/local/bin/
 
 ## 插件功能
 
-**语法高亮** — 覆盖全部关键字（70 个）、40 个内置命名空间、
+**语法高亮** — 覆盖全部关键字（70 个）、41 个内置命名空间、
 C/FFI 互操作（`c.compile` / `c.callback` / `c.parse_header` / `ffi.alloc` 等成员，
 以及 `struct:int32,double`、`clong`/`culong` 等类型写法）。
 
