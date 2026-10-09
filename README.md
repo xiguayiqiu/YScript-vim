@@ -1,9 +1,22 @@
 # YScript Vim 支持
 
+<<<<<<< HEAD
 YScript 语言的 Vim/Neovim 语法高亮 + 保存时自动语法检查。
 
 **零依赖** — 无需 Node.js，无需 LSP 服务端，纯 Vimscript。
 
+=======
+YScript 语言的 Vim/Neovim 语法高亮与文件类型检测。
+
+**零依赖** — 无需 Node.js，无需 LSP 服务端，纯 Vimscript。
+
+兼容 YScript `v0.1.5.3`。泛型函数和结构体、类型参数、`number` / `Named` 等约束，以及 `list<T>`、`dict<K, V>` 等泛型类型均有 Vim 语法高亮。`ysc.models` / `ysc.sum` 自动识别为 `yscmanifest` 并高亮项目版本、依赖版本、Git URL 和 `h1:` 校验值。泛型错误仍由解释器在 `yscript -c` 编译检查时报告。
+
+YScript `v0.1.5.3` 的 `load` 标准库支持模块生命周期接口，所有生命周期方法都接收源文件路径字符串：`load.install(path)` 解析、编译并注册模块但不执行代码；`load.start(path)` 执行已安装模块的初始化和顶层代码；`load.stop(path)` 调用模块可选的模块级 `stop()` 函数；`load.uninstall(path)` 必要时先停止，再移除模块声明。既有 `load.load(path)`、`load.reload(path)`、`load.unload(path)` 和 `load.loaded()` 热加载接口仍然保留。Vim 支持仅提供语法高亮，不提供这些接口的补全或执行。
+
+`ysc doc` 支持把函数文档放在源文件任意位置，并按函数名匹配 `@functionName HEAD` 与 `@functionName END` 之间的注释。Vim 语法文件会高亮这两种标记。
+
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 ---
 
 ## 安装
@@ -11,17 +24,24 @@ YScript 语言的 Vim/Neovim 语法高亮 + 保存时自动语法检查。
 ### Vim
 
 ```bash
+<<<<<<< HEAD
 mkdir -p ~/.vim/{syntax,ftdetect,plugin,indent,ftplugin}
 cp vim/syntax/yscript.vim ~/.vim/syntax/
 cp vim/ftdetect/yscript.vim ~/.vim/ftdetect/
 cp vim/plugin/yscript.vim ~/.vim/plugin/
 cp vim/indent/yscript.vim ~/.vim/indent/
 cp vim/ftplugin/yscript.vim ~/.vim/ftplugin/
+=======
+mkdir -p ~/.vim/{syntax,ftdetect}
+cp vim/syntax/yscript.vim ~/.vim/syntax/
+cp vim/ftdetect/yscript.vim ~/.vim/ftdetect/
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 ```
 
 ### Neovim
 
 ```bash
+<<<<<<< HEAD
 mkdir -p ~/.config/nvim/{syntax,ftdetect,plugin,indent,ftplugin}
 cp vim/syntax/yscript.vim ~/.config/nvim/syntax/
 cp vim/ftdetect/yscript.vim ~/.config/nvim/ftdetect/
@@ -57,6 +77,40 @@ go build -o yscript ./cmd/yscript/
 sudo cp yscript /usr/local/bin/
 ```
 
+=======
+mkdir -p ~/.config/nvim/{syntax,ftdetect}
+cp vim/syntax/yscript.vim ~/.config/nvim/syntax/
+cp vim/ftdetect/yscript.vim ~/.config/nvim/ftdetect/
+```
+
+> 需要在 `.vimrc` / `init.lua` 中启用文件类型检测：
+>
+> ```vim
+> filetype on
+> ```
+
+## 泛型支持
+
+语法文件会高亮泛型函数/结构体声明中的类型参数与约束名，并为泛型类型标注和实例化中的类型提供类型高亮。支持的形式包括多个类型参数、内建约束、接口约束及嵌套容器类型：
+
+```yscript
+func add<T: number>(left: T, right: T) -> T {
+    return left + right
+}
+
+func display<T: Named>(value: T) -> string {
+    return value.name()
+}
+
+struct Pair<K, V> {
+    keys: list<K>
+    values: dict<K, V>
+}
+```
+
+Vim 高亮只负责编辑器显示；要检查泛型类型及约束是否有效，请手动运行 `yscript -c path/to/file.ys`。
+
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 ---
 
 ## 语法高亮
@@ -65,6 +119,7 @@ sudo cp yscript /usr/local/bin/
 
 | 类别 | 高亮组 | 示例 |
 |------|--------|------|
+<<<<<<< HEAD
 | 声明/控制流 | `yscriptStatement/Conditional/Repeat` | `func` `let` `if` `for` `warp` |
 | 类型推断声明名 | `yscriptVariableName` | `result <- expression` |
 | 异常 | `yscriptException` | `try` `catch` `finally` `ensure` `raise` `panic` `recover` `assert` |
@@ -126,11 +181,31 @@ sudo cp yscript /usr/local/bin/
 >
 > **成员名高亮**：`.` 后紧跟标识符时按方法/属性着色（`s.listen()`、`"x".upper()`、
 > `m.try_lock()`），此时 `.` 本身不再按操作符着色；浮点字面量（`1.5`）不受影响。
+=======
+| 声明/控制流 | `yscriptStatement` | `func` `let` `if` `for` `struct` |
+| 异常 | `yscriptException` | `try` `catch` `raise` `panic` `recover` |
+| 类型 | `yscriptType` | `string` `bytes` `list` `dict` `ipv4` `T` `Box` |
+| 泛型参数列表/约束 | `yscriptGenericParams/Constraint` | `func identity<T>` `func add<T: number>` `func display<T: Named>` |
+| 函数/类型声明名 | `yscriptFuncName/TypeName` | `func main(` `struct Box<T>` |
+| 内置函数 | `yscriptBuiltin` | `print` `len` `type` `eval` `hex` |
+| 逻辑 | `yscriptLogical` | `and` `or` `not` `xor` |
+| 布尔/特殊值 | `yscriptSpecial` | `true` `false` `nil` |
+| 字符串 | `yscriptString` | `"hello world"` |
+| 注释 | `yscriptComment/yscriptBlockComment` | `# 行注释` `#* 块注释 *#` |
+| 文档注解标记 | `yscriptDocAnnotation` | `@banner_text HEAD` `@banner_text END` |
+| 数字 | `yscriptNumber` | `42` `3.14` |
+| 操作符 | `yscriptOperator` | `<-` `=>` `->` `==` `?.` `??` `+=` |
+
+各组默认链接到 Vim 的标准高亮组，颜色由当前 colorscheme 决定。
+
+> 类型参数和内建约束沿用类型高亮，自定义约束名使用 `yscriptGenericConstraint` 组；嵌套类型注解与实例化中的类型沿用类型高亮。Vim 不执行类型检查。
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 
 ---
 
 ## 文件类型检测
 
+<<<<<<< HEAD
 自动为 `.ys` 和 `.yscript` 文件启用 YScript 文件类型。
 
 ---
@@ -148,6 +223,15 @@ C/FFI 互操作（`c.compile` / `c.callback` / `c.parse_header` / `ffi.alloc` �
 ```vim
 let g:loaded_yscript_plugin = 1
 ```
+=======
+自动为 `.ys` 和 `.yscript` 文件启用 YScript 文件类型；自动为 `ysc.models` 和 `ysc.sum` 启用依赖清单高亮。
+
+---
+
+## 支持范围
+
+此目录提供 YScript 语法高亮和 `.ys` / `.yscript` 文件类型检测。语法检查、自动缩进和 LSP 补全不由这些 Vim 文件提供。
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 
 ---
 

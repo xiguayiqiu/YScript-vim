@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 " YScript Vim syntax highlighting
 " Full syntax support for YScript InfoSec scripting language
 " Last updated: 2026-10（<- 类型推断声明）
@@ -15,10 +16,13 @@
 "
 " 命名空间清单与 internal/std 的 GetNamespace() 保持一致（41 个）。
 
+=======
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 if exists("b:current_syntax")
   finish
 endif
 
+<<<<<<< HEAD
 " ── 注释 ────────────────────────────────────────────
 " YScript 使用 # 行注释，支持 #* *# 块注释
 " 用 region 而非 match，避免注释内出现数字/字符串/正则被二次高亮
@@ -359,5 +363,56 @@ hi def yscriptShellFunc       ctermfg=6   guifg=#44bbdd
 hi def yscriptEscape          ctermfg=9   guifg=#ff6666
 hi def yscriptInterpEscape    ctermfg=9   guifg=#ff6666
 hi def yscriptShellEscape     ctermfg=9   guifg=#ff6666
+=======
+syntax match yscriptComment /#\%(\*\)\@!.*/
+syntax region yscriptBlockComment start=/#\*/ end=/\*#/
+syntax match yscriptDocAnnotation /^\s*@\s*\h\w*\s\+\%(HEAD\|END\)\s*$/
+syntax region yscriptString start=/"/ skip=/\\./ end=/"/
+syntax region yscriptString start=/'/ skip=/\\./ end=/'/
+
+syntax keyword yscriptStatement func init let var const struct interface enum class
+syntax keyword yscriptStatement if else elif switch case default for in range while loop
+syntax keyword yscriptStatement break continue return yield goto defer match warp import package as
+syntax keyword yscriptConditional if else elif switch case default
+syntax keyword yscriptException try catch finally ensure raise panic recover assert
+syntax keyword yscriptLogical and or not xor
+syntax keyword yscriptSpecial true false nil
+
+syntax keyword yscriptType byte char short ushort int uint long ulong int8 uint8 int16 uint16
+syntax keyword yscriptType int32 uint32 int64 uint64 float double bool string bytes list dict
+syntax keyword yscriptType ipv4 ipv6 error void any number ordered comparable
+syntax match yscriptType /\<[A-Z][A-Za-z0-9_]*\>/
+
+syntax match yscriptFuncName /\<func\>\s\+\%(\h\w*\s*\.\s*\)\?\zs\h\w*\ze\s*</
+syntax match yscriptFuncName /\<func\>\s\+\%(\h\w*\s*\.\s*\)\?\zs\h\w*\ze\s*(/
+syntax match yscriptTypeName /\<struct\>\s\+\zs\h\w*\ze\s*</
+syntax match yscriptTypeName /\<\%(struct\|interface\|enum\|class\)\>\s\+\zs\h\w*/
+syntax match yscriptGenericConstraint /:\s*\zs\h\w*/ contained
+syntax match yscriptFuncName /\<[a-z_]\w*\ze\s*</
+
+syntax match yscriptBuiltin /\<\%(print\|println\|printf\|sprintf\|len\|type\|eval\|next\|hex\)\>/
+syntax match yscriptNumber /\<\d\+\%(\.\d\+\)\?\>/
+syntax match yscriptGenericParams /<\h\w*\%(:\s*\h\w*\)\?\%(\s*,\s*\h\w*\%(:\s*\h\w*\)\?\)*\s*>/
+      \ contains=ALL
+syntax match yscriptOperator /->\|<-\|=>\|==\|!=\|<=\|>=\|+=\|-=\|??\|?.\|[+*\/%=]/
+
+highlight default link yscriptComment Comment
+highlight default link yscriptBlockComment Comment
+highlight default link yscriptDocAnnotation PreProc
+highlight default link yscriptString String
+highlight default link yscriptStatement Statement
+highlight default link yscriptConditional Conditional
+highlight default link yscriptException Exception
+highlight default link yscriptLogical Operator
+highlight default link yscriptSpecial Boolean
+highlight default link yscriptType Type
+highlight default link yscriptTypeName Type
+highlight default link yscriptFuncName Function
+highlight default link yscriptGenericParams Normal
+highlight default link yscriptGenericConstraint Type
+highlight default link yscriptBuiltin Function
+highlight default link yscriptNumber Number
+highlight default link yscriptOperator Operator
+>>>>>>> c853ae8 (update vim 0.1.5.3)
 
 let b:current_syntax = "yscript"
