@@ -33,7 +33,7 @@ syntax on
   （`name <- expression`）；
 - 文档注解块（`@functionName HEAD` / `@functionName END`）；
 - 字符串、插值字符串、bytes/base64、正则、反引号 Shell 命令、数字和转义；
-- 预处理指令、标签、测试表达式操作符、内置函数和标准库命名空间成员。
+- 预处理指令、标签、测试表达式操作符、内置函数和标准库命名空间成员，包含 `lstd` 动态库调用 API。
 
 示例：
 
@@ -81,3 +81,7 @@ YScript `load` 标准库支持 `load.install(path)`、`load.start(path)`、
 `load.stop(path)` 和 `load.uninstall(path)` 模块生命周期接口，同时保留
 `load.load` / `load.reload` / `load.unload` / `load.loaded` 函数插件 API。
 Vim 插件不执行这些接口，仅提供相应代码的语法高亮。
+
+`lstd` 通过 `YSCRIPT_LSTD_ALLOW` 白名单加载和调用 native 动态库；Vim 只负责高亮，
+不会加载动态库或提供安全隔离。接口与部署注意事项见
+[lstd 安全动态库调用指南](../doc/YScript.wiki/60_lstd安全动态库调用.md)。

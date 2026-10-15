@@ -132,11 +132,11 @@ syn keyword yscriptType       clong culong ptr void cstring
 
 " ── 命名空间 ────────────────────────────────────
 " 用 match 而非 keyword，便于与命名空间函数/常量匹配共存
-syn match   yscriptNamespace  "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>"
+syn match   yscriptNamespace  "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|lstd\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>"
 
 " 命名空间函数调用 ns.func（ns 部分青色，函数名亮蓝）
-syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
-syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\." contained
+syn match   yscriptQualifiedBuiltin "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|lstd\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\.[A-Za-z_][A-Za-z0-9_]*" contains=yscriptNsDot
+syn match   yscriptNsDot       "\<\%(aes\|array\|binary\|c\|color\|compress\|crypto\|csv\|cuda\|encoding\|errors\|ffi\|from\|http\|ini\|io\|iter\|json\|log\|lstd\|net\|os\|path\|rand\|raw\|reflect\|regex\|rsa\|socket\|ssl\|stdio\|string\|strings\|sync\|sys\|thread\|time\|toml\|url\|xml\|yaml\)\>\." contained
 
 " 命名空间常量 io.Stdin / io.EOF / time.DAY / binary.EOF
 syn match   yscriptOCRNamespace "\<ocr\>"
@@ -159,6 +159,7 @@ syn match   yscriptNetFunc     "net\.\%(nginx\|Nginx\)\>"
 
 " 加密与哈希：SHA2/SHA3/BLAKE2/HMAC
 syn match   yscriptCryptoFunc  "crypto\.\%(MD5\|SHA1\|SHA224\|SHA256\|SHA384\|SHA512\|SHA512_224\|SHA512_256\|SHA3_224\|SHA3_256\|SHA3_384\|SHA3_512\|SHAKE128\|SHAKE256\|BLAKE2s\|BLAKE2b\|HMAC_SHA256\|HMAC_SHA3\|HMAC_SHA3_256\|HMAC_SHA3_384\|HMAC_SHA3_512\|HMAC_SHA512\|HashFile\|PBKDF2\|BcryptHash\|BcryptVerify\)\>"
+syn match   yscriptCudaFunc    "cuda\.\%(available\|device_count\|device_name\|device_memory\|Device_Info\|Set_Device\|Sync\|MD4_Batch\|MD5_Batch\|SHA256_Batch\|SHA512_Batch\|SHA256d_Batch\|NTLM_Batch\|HMAC_SHA1_Batch\|HMAC_SHA256_Batch\|HMAC_SHA512_Batch\|PBKDF2_Batch\|WPA2_PMK_Batch\)\>"
 
 " ── C/FFI 高频成员 ─────────────────────────────────────
 " c 模块：编译工具链 + 动态库 + 回调 + 头文件解析
@@ -167,6 +168,7 @@ syn match   yscriptCFunc      "c\.\%(callback\|callback_free\|parse_header\|head
 syn match   yscriptCFunc      "c\.\%(compiler\|compilers\)\>"
 " ffi 命名空间
 syn match   yscriptCFunc      "ffi\.\%(open\|find\|bind\|call\|alloc\|free\|read\|write\|str\)\>"
+syn match   yscriptCFunc      "lstd\.\%(load\|find\|find_ordinal\|bind\|call\|close\|alloc\|buffer\|ptr\|free\|read\|write\|str\|callback\|callback_free\|error\)\>"
 " 回调类型标记：c.callback(...) 的参数里会出现这些 FFI 类型名
 " 结构体类型形如 struct:int32,double（冒号后是字段类型列表）
 syn match   yscriptFFIType    "\<\%(clong\|culong\|int8\|int16\|int32\|int64\)\>"
@@ -293,6 +295,7 @@ hi def link yscriptCFunc       yscriptQualifiedBuiltin
 hi def link yscriptHttpFunc     yscriptQualifiedBuiltin
 hi def link yscriptNetFunc      yscriptQualifiedBuiltin
 hi def link yscriptCryptoFunc   yscriptQualifiedBuiltin
+hi def link yscriptCudaFunc     yscriptQualifiedBuiltin
 hi def link yscriptOCRQualifiedBuiltin yscriptQualifiedBuiltin
 hi def link yscriptOCRFunc      yscriptQualifiedBuiltin
 hi def yscriptFFIType         ctermfg=10  guifg=#cc9966
